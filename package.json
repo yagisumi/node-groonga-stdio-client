@@ -1,0 +1,53 @@
+{
+  "name": "@yagisumi/groonga-stdio-client",
+  "version": "0.1.0",
+  "description": "",
+  "keywords": [],
+  "engines": {
+    "node": ">= 6.0.0"
+  },
+  "private": true,
+  "main": "lib/groonga-stdio-client",
+  "module": "lib/groonga-stdio-client.mjs",
+  "types": "lib/groonga-stdio-client.d.ts",
+  "unpkg": "umd/groonga-stdio-client.js",
+  "scripts": {
+    "test": "run-s prettier:fix eslint jest",
+    "test:ci": "run-s eslint jest",
+    "jest": "jest",
+    "doc": "typedoc --json ./docs/typedoc.json --tsconfig ./tsconfig.json ./src",
+    "build": "run-s clean build:*",
+    "clean": "rimraf lib coverage umd *.tgz .rpt2_cache",
+    "build:cjs": "rollup -c -f cjs -o ./lib/groonga-stdio-client.js",
+    "build:mjs": "rollup -c -f es -o ./lib/groonga-stdio-client.mjs",
+    "build:umd": "rollup -c rollup.config.umd.js",
+    "build:d_ts": "tsc -p src -d --emitDeclarationOnly --outDir ./lib",
+    "prettier:fix": "prettier --write \"**/*.{ts,js,json}\"",
+    "eslint": "eslint \"**/*.{js,ts}\"",
+    "prepack": "run-s build test"
+  },
+  "author": "yagisumi",
+  "repository": "github:yagisumi/node-groonga-stdio-client",
+  "homepage": "http://github.com/yagisumi/node-groonga-stdio-client#readme",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/node": "^13.13.5",
+    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@typescript-eslint/parser": "^2.31.0",
+    "coveralls": "^3.1.0",
+    "eslint": "^6.8.0",
+    "jest": "^26.0.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.8.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^5.3.0",
+    "rollup-plugin-typescript2": "^0.27.0",
+    "ts-jest": "^25.5.0",
+    "typedoc": "^0.17.6",
+    "typescript": "^3.8.3"
+  }
+}
