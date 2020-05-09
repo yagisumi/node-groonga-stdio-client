@@ -1,7 +1,6 @@
 import fs from 'fs'
 import path from 'path'
 import { Options, GroongaStdioClient } from '@/groonga-stdio-client'
-import { resolve } from 'dns'
 
 export function mkdir(path: string) {
   fs.mkdirSync(path)
