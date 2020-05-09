@@ -31,7 +31,6 @@ export class GroongaStdioClient {
   private groongaPath = 'groonga'
   private groonga?: child_process.ChildProcessWithoutNullStreams
   private executing = false
-  private errors: Error[] = []
   private commandQueue: CommandData[] = []
   private currentCommandData?: CommandData
   private data?: string
@@ -39,6 +38,7 @@ export class GroongaStdioClient {
   private currentOutputType?: string
   private intervalId?: NodeJS.Timeout
   private timeoutId?: NodeJS.Timeout
+  private error?: Error
 
   constructor(db_path: string, options?: Options) {
     this.dbPath = db_path
@@ -68,7 +68,7 @@ export class GroongaStdioClient {
 
     this.groonga.on('exit', (code) => {
       this._exitCode = code
-      this.groonga = undefined
+      this.resetGroonga()
     })
 
     this.groonga.on('error', (err) => {
@@ -79,12 +79,6 @@ export class GroongaStdioClient {
           return
         }
       }
-
-      if (typeof err === 'string') {
-        this.errors.push(new Error(err))
-      } else if (err instanceof Error) {
-        this.errors.push(err)
-      }
     })
   }
 
@@ -94,6 +88,10 @@ export class GroongaStdioClient {
       this.groonga.removeAllListeners('exit')
     }
     this.groonga = undefined
+  }
+
+  isAlive() {
+    return this.groonga !== undefined
   }
 
   command(command: string, options: object, callback: CommandCallback): void
@@ -152,7 +150,7 @@ export class GroongaStdioClient {
 
   private initResponse() {
     this.data = undefined
-    this.errors = []
+    this.error = undefined
 
     if (this.intervalId !== undefined) {
       clearInterval(this.intervalId)
@@ -163,7 +161,7 @@ export class GroongaStdioClient {
 
     this.timeoutId = setTimeout(() => {
       this.timeoutId = undefined
-      this.errors.push(new Error('timeout error'))
+      this.error = new Error('timeout error')
       this.done()
     }, Math.max(this.timeout, 30000))
 
@@ -225,10 +223,8 @@ export class GroongaStdioClient {
           }
         }
       } else {
-        const err = this.errors.pop()
-
-        if (err) {
-          this.currentCommandData.callback(err, null)
+        if (this.error) {
+          this.currentCommandData.callback(this.error, null)
         } else if (this.groonga === undefined) {
           this.currentCommandData.callback(new Error('groonga already ended'), null)
         } else {
@@ -265,7 +261,9 @@ export class GroongaStdioClient {
   kill() {
     if (this.groonga) {
       try {
-        return this.groonga.kill()
+        const r = this.groonga.kill()
+        this.resetGroonga()
+        return r
       } catch (err) {
         return false
       }
@@ -276,9 +274,5 @@ export class GroongaStdioClient {
 }
 
 export function createClient(db_path: string, options?: Options) {
-  try {
-    return new GroongaStdioClient(db_path, options)
-  } catch (err) {
-    return undefined
-  }
+  return new GroongaStdioClient(db_path, options)
 }
