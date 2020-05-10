@@ -2,6 +2,8 @@ import { createClient, GroongaStdioClient, GroongaError } from '@/groonga-stdio-
 import { mkdir, rimraf, createOptions, shutdown } from './test_utils'
 import path from 'path'
 
+jest.setTimeout(30000)
+
 describe('GroongaStdioClient', () => {
   const db_dir = path.join(__dirname, 'db_main')
 
