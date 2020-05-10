@@ -5,7 +5,7 @@ on:
 
 jobs:
   build_ubuntu:
-    name: Node.js ubuntu ${{ matrix.node }}
+    name: ubuntu Node.js ${{ matrix.node }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     strategy:
@@ -34,7 +34,7 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
   build_windows:
-    name: Node.js windows ${{ matrix.node }}
+    name: windows Node.js ${{ matrix.node }}
     runs-on: windows-latest
     timeout-minutes: 10
     strategy:
@@ -69,7 +69,7 @@ jobs:
           set GROONGA_PATH=%GITHUB_WORKSPACE%\..\groonga
           npm test
   build_macos:
-    name: Node.js macos ${{ matrix.node }}
+    name: macos Node.js ${{ matrix.node }}
     runs-on: macos-latest
     timeout-minutes: 10
     strategy:
