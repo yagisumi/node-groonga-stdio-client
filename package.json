@@ -1,11 +1,8 @@
 {
   "name": "@yagisumi/groonga-stdio-client",
   "version": "0.1.0",
-  "description": "",
+  "description": "Groonga Standard I/O interface client.",
   "keywords": [],
-  "engines": {
-    "node": ">= 6.0.0"
-  },
   "private": true,
   "main": "lib/groonga-stdio-client",
   "module": "lib/groonga-stdio-client.mjs",
@@ -13,9 +10,7 @@
   "unpkg": "umd/groonga-stdio-client.js",
   "scripts": {
     "test": "run-s prettier:fix eslint jest",
-    "test:ci": "run-s eslint jest",
     "jest": "jest",
-    "doc": "typedoc --json ./docs/typedoc.json --tsconfig ./tsconfig.json ./src",
     "build": "run-s clean build:*",
     "clean": "rimraf lib coverage umd *.tgz .rpt2_cache",
     "build:cjs": "rollup -c -f cjs -o ./lib/groonga-stdio-client.js",
