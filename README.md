@@ -1,9 +1,10 @@
 # @yagisumi/groonga-stdio-client
 
-Welcome
+For testing purposes.
+Groonga Standard I/O interface client.
 
 [![NPM version][npm-image]][npm-url] [![install size][packagephobia-image]][packagephobia-url] [![DefinitelyTyped][dts-image]][dts-url]  
-[![Build Status][githubactions-image]][githubactions-url] [![Build Status][travis-image]][travis-url] [![Build Status][appveyor-image]][appveyor-url] [![Coverage percentage][coveralls-image]][coveralls-url]
+[![Build Status][githubactions-image]][githubactions-url] [![Coverage percentage][coveralls-image]][coveralls-url]
 
 ## Installation
 
@@ -13,25 +14,63 @@ $ npm i @yagisumi/groonga-stdio-client
 
 ## Usage
 
-- javascript
-
-```js
-const { groonga-stdio-client } = require('@yagisumi/groonga-stdio-client');
-
-XXXXXXXXX();
-```
-
 - typescript
 
 ```ts
-import { @yagisumi/groonga-stdio-client } from '@yagisumi/groonga-stdio-client';
+import { createClient } from '@yagisumi/groonga-stdio-client'
 
-XXXXXXXXX();
+async function main() {
+  const client = createClient(dbPath, { groongaPath: 'groonga' })
+  const r1 = await client.commandAsync('status').catch(() => undefined)
+
+  client.command('table_list', (err, data) => {
+    if (err) {
+      console.error(err)
+    } else {
+      console.log(data)
+    }
+  })
+}
+main()
 ```
 
-## Documentation
+## API
 
-https://yagisumi.github.io/node-groonga-stdio-client/
+### GroongaStdioClient
+```ts
+function createClient(
+  db_path: string, 
+  options?: { groongaPath?: string; readInterval?: number }
+): GroongaStdioClient
+```
+Creats a client. Same as `new GroongaStdioClient(db_path, options)`
+
+### GroongaStdioClient
+#### command
+```ts
+command(
+  command: string,
+  options: object,
+  callback: (err: Error, data: any) => void
+): void
+command(
+  command: string,
+  callback: (err: Error, data: any) => void
+): void
+```
+Executes a command with a callback.
+
+#### commandAsync
+```ts
+commandAsync(
+  command: string,
+  options: object
+): Promise<any>
+commandAsync(
+  command: string
+): Promise<any>
+```
+Executes a command and returns a promise.
 
 ## License
 
