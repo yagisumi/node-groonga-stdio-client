@@ -25,6 +25,7 @@ describe('GroongaStdioClient', () => {
     setTimeout(() => {
       console.log('timeout')
       expect(client['groonga']).toBeUndefined()
+      expect(client.error).toBeInstanceOf(Error)
       client.command('status', (err, data) => {
         expect(err).toBeInstanceOf(Error)
         expect(data).toBeNull()

@@ -14,10 +14,11 @@ type CommandCallback = (err: Error | undefined, data: any) => void
 type CommandData = {
   command: GroongaCommand
   callback: CommandCallback
+  error?: Error
 }
 
 function isErrnoException(err: any): err is NodeJS.ErrnoException {
-  return typeof err === 'object' && err instanceof Error && ('errno' in err || 'code' in err)
+  return typeof err === 'object' && err instanceof Error && 'code' in err
 }
 
 export class GroongaStdioClient {
@@ -34,7 +35,10 @@ export class GroongaStdioClient {
   private currentOutputType?: string
   private intervalId?: NodeJS.Timeout
   private timeoutId?: NodeJS.Timeout
-  private error?: Error
+  private _error?: Error
+  get error() {
+    return this._error
+  }
 
   constructor(db_path: string, options?: Options) {
     this.dbPath = db_path
@@ -70,6 +74,7 @@ export class GroongaStdioClient {
       if (isErrnoException(err)) {
         const code = err.code ?? ''
         if (code === 'ENOENT') {
+          this._error = err
           this.resetGroonga()
           return
         }
@@ -145,7 +150,6 @@ export class GroongaStdioClient {
 
   private initResponse() {
     this.data = undefined
-    this.error = undefined
 
     if (this.intervalId !== undefined) {
       clearInterval(this.intervalId)
@@ -156,7 +160,9 @@ export class GroongaStdioClient {
 
     this.timeoutId = setTimeout(() => {
       this.timeoutId = undefined
-      this.error = new Error('timeout error')
+      if (this.currentCommandData) {
+        this.currentCommandData.error = new Error('timeout error')
+      }
       this.done()
     }, Math.max(this.timeout, 30000))
 
@@ -197,7 +203,7 @@ export class GroongaStdioClient {
       this.intervalId = undefined
     }
 
-    if (this.currentCommandData !== undefined) {
+    if (this.currentCommandData) {
       if (this.currentOutputType === 'msgpack' && this.buf) {
         this.currentCommandData.callback(undefined, this.buf)
       } else if (this.data) {
@@ -213,8 +219,8 @@ export class GroongaStdioClient {
           }
         }
       } else {
-        if (this.error) {
-          this.currentCommandData.callback(this.error, null)
+        if (this.currentCommandData.error) {
+          this.currentCommandData.callback(this.currentCommandData.error, null)
         } else if (this.groonga === undefined) {
           this.currentCommandData.callback(new Error('groonga already ended'), null)
         } else {
