@@ -21,7 +21,7 @@ describe('GroongaStdioClient', () => {
 
   test('invalid groonga path', (done) => {
     const db_path = path.join(db_dir, `invalid_groonga.db`)
-    const client = new GroongaStdioClient(db_path, { groongaPath: '!!!groonga!!!' })
+    const client = new GroongaStdioClient(db_path, { groongaPath: '!!!groonga!!!', readInterval: 1000 })
     setTimeout(() => {
       console.log('timeout')
       expect(client['groonga']).toBeUndefined()
