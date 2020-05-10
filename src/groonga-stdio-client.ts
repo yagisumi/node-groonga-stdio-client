@@ -206,13 +206,8 @@ export class GroongaStdioClient {
         } else {
           try {
             const res = JSON.parse(this.data)
-            const result = getResponseBody(res)
-
-            if (result.error) {
-              this.currentCommandData.callback(result.error, null)
-            } else {
-              this.currentCommandData.callback(undefined, result.value)
-            }
+            const { error, value } = getResponseBody(res)
+            this.currentCommandData.callback(error, value)
           } catch (err) {
             this.currentCommandData.callback(undefined, this.data)
           }
