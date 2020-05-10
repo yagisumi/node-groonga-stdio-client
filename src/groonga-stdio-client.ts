@@ -22,10 +22,6 @@ function isErrnoException(err: any): err is NodeJS.ErrnoException {
 
 export class GroongaStdioClient {
   readonly dbPath: string
-  private _exitCode: number | null = null
-  get exitCode() {
-    return this._exitCode
-  }
   private readInterval = 300
   timeout = 10000
   private groongaPath = 'groonga'
@@ -66,8 +62,7 @@ export class GroongaStdioClient {
 
     this.groonga = child_process.spawn(this.groongaPath, args, { stdio: 'pipe' })
 
-    this.groonga.on('exit', (code) => {
-      this._exitCode = code
+    this.groonga.on('exit', () => {
       this.resetGroonga()
     })
 
