@@ -6,6 +6,7 @@ export { GroongaError } from './client_utils'
 
 export type Options = {
   groongaPath?: string
+  openOnly?: boolean
   readInterval?: number
 }
 
@@ -26,6 +27,7 @@ export class GroongaStdioClient {
   private readInterval = 300
   timeout = 10000
   private groongaPath = 'groonga'
+  private openOnly = false
   private groonga?: child_process.ChildProcessWithoutNullStreams
   private executing = false
   private commandQueue: CommandData[] = []
@@ -49,6 +51,9 @@ export class GroongaStdioClient {
       if (options.readInterval) {
         this.readInterval = Math.max(options.readInterval, 300)
       }
+      if (options.openOnly != null) {
+        this.openOnly = options.openOnly
+      }
     }
     this.initGroonga()
   }
@@ -59,14 +64,27 @@ export class GroongaStdioClient {
     }
 
     const args: string[] = []
-    if (!fs.existsSync(this.dbPath)) {
+    if (!fs.existsSync(this.dbPath) && !this.openOnly) {
       args.push('-n')
     }
     args.push(this.dbPath)
 
     this.groonga = child_process.spawn(this.groongaPath, args, { stdio: 'pipe' })
 
-    this.groonga.on('exit', () => {
+    this.groonga.on('exit', (code) => {
+      if (code !== 0 && this.groonga) {
+        try {
+          this.groonga.stderr.setEncoding('utf8')
+          const message = this.groonga.stderr.read()
+          if (message && typeof message === 'string' && message.length > 0) {
+            this._error = new Error(`[exit code: ${code}] ${message}`)
+          } else {
+            this._error = new Error(`[exit code: ${code}]`)
+          }
+        } catch (err) {
+          this._error = new Error(`[exit code: ${code}]`)
+        }
+      }
       this.resetGroonga()
     })
 

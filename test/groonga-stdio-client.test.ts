@@ -25,7 +25,6 @@ describe('GroongaStdioClient', () => {
     const db_path = path.join(db_dir, `invalid_groonga.db`)
     const client = new GroongaStdioClient(db_path, { groongaPath: '!!!groonga!!!', readInterval: 1000 })
     setTimeout(() => {
-      console.log('timeout')
       expect(client['groonga']).toBeUndefined()
       expect(client.error).toBeInstanceOf(Error)
       client.command('status', (err, data) => {
@@ -35,6 +34,27 @@ describe('GroongaStdioClient', () => {
         client.kill()
         done()
       })
+    }, 1000)
+  })
+
+  test('openOnly', (done) => {
+    const db_path = path.join(db_dir, `openonlry.db`)
+    const opts = createOptions()
+    opts.openOnly = true
+    const client = createClient(db_path, opts)
+    try {
+      expect(client.error).toBeUndefined()
+    } catch (err) {
+      shutdown(client, done)
+      throw err
+    }
+
+    setTimeout(() => {
+      try {
+        expect(client.error).toBeInstanceOf(Error)
+      } finally {
+        shutdown(client, done)
+      }
     }, 1000)
   })
 
