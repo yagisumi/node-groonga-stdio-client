@@ -112,10 +112,10 @@ export class GroongaStdioClient {
     return this.groonga !== undefined
   }
 
-  command(command: string, options: object, callback: CommandCallback): void
+  command(command: string, options: Record<string, unknown>, callback: CommandCallback): void
   command(command: string, callback: CommandCallback): void
-  command(command: string, opts_or_cb: object | CommandCallback, callback?: CommandCallback): void {
-    let opts: object
+  command(command: string, opts_or_cb: Record<string, unknown> | CommandCallback, callback?: CommandCallback): void {
+    let opts: Record<string, unknown>
     let cb: CommandCallback
     if (typeof opts_or_cb === 'object') {
       if (callback) {
@@ -258,9 +258,9 @@ export class GroongaStdioClient {
     }
   }
 
-  commandAsync(command: string, options: object): Promise<any>
+  commandAsync(command: string, options: Record<string, unknown>): Promise<any>
   commandAsync(command: string): Promise<any>
-  commandAsync(command: string, options?: object): Promise<any> {
+  commandAsync(command: string, options?: Record<string, unknown>): Promise<any> {
     return new Promise((resolve, reject) => {
       this.command(command, options || {}, (err, data) => {
         if (err) {
