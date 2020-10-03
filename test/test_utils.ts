@@ -34,8 +34,8 @@ export function createOptions() {
 }
 
 export function shutdown(client: GroongaStdioClient): Promise<void>
-export function shutdown(client: GroongaStdioClient, done: jest.DoneCallback): void
-export function shutdown(client: GroongaStdioClient, done?: jest.DoneCallback): Promise<void> | void {
+export function shutdown(client: GroongaStdioClient, done: () => any): void
+export function shutdown(client: GroongaStdioClient, done?: () => any): Promise<void> | void {
   if (done) {
     client.command('quit', () => {
       client.kill()
