@@ -14,6 +14,7 @@ module.exports = {
     },
   },
   setupFiles: ['./test/fix-instanceof.js'],
+  setupFilesAfterEnv: ['./test/jest.setup.js'],
   moduleNameMapper: {
     '^@/(.+)': '<rootDir>/src/$1',
   },

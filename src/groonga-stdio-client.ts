@@ -29,6 +29,9 @@ export class GroongaStdioClient {
   private groongaPath = 'groonga'
   private openOnly = false
   private groonga?: child_process.ChildProcessWithoutNullStreams
+  get process() {
+    return this.groonga
+  }
   private executing = false
   private commandQueue: CommandData[] = []
   private currentCommandData?: CommandData
@@ -287,6 +290,8 @@ export class GroongaStdioClient {
   }
 }
 
-export function createClient(db_path: string, options?: Options) {
+export function createGroongaClient(db_path: string, options?: Options) {
   return new GroongaStdioClient(db_path, options)
 }
+
+export const createClient = createGroongaClient

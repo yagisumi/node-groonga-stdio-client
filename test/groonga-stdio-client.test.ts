@@ -2,199 +2,193 @@ import { createClient, GroongaStdioClient, GroongaError } from '@/groonga-stdio-
 import { mkdir, rimraf, createOptions, shutdown } from './test_utils'
 import path from 'path'
 
-jest.setTimeout(30000)
-
 describe('GroongaStdioClient', () => {
-  const db_dir = path.join(__dirname, 'db_main')
+  let db_dir: string | undefined
+  let client: GroongaStdioClient | undefined
 
-  beforeAll(() => {
-    rimraf(db_dir)
-    mkdir(db_dir)
+  beforeEach(() => {
+    db_dir = undefined
+    client = undefined
   })
 
-  afterAll(() => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        rimraf(db_dir)
-        resolve()
-      }, 800)
-    })
+  afterEach(async () => {
+    if (client) {
+      await shutdown(client).catch(() => null)
+    }
+    if (db_dir) {
+      rimraf(db_dir)
+    }
   })
 
   test('invalid groonga path', (done) => {
-    const db_path = path.join(db_dir, `invalid_groonga.db`)
-    const client = new GroongaStdioClient(db_path, { groongaPath: '!!!groonga!!!', readInterval: 1000 })
+    db_dir = path.join(__dirname, 'temp.invalid_groonga')
+    const db_path = path.join(db_dir, `db`)
+    rimraf(db_dir)
+    mkdir(db_dir)
+
+    client = new GroongaStdioClient(db_path, { groongaPath: '!!!groonga!!!', readInterval: 1000 })
     setTimeout(() => {
-      expect(client['groonga']).toBeUndefined()
-      expect(client.error).toBeInstanceOf(Error)
-      client.command('status', (err, data) => {
-        expect(err).toBeInstanceOf(Error)
-        expect(data).toBeNull()
-        expect(client.isAlive()).toBe(false)
-        client.kill()
-        done()
-      })
+      if (client) {
+        expect(client['groonga']).toBeUndefined()
+        expect(client.error).toBeInstanceOf(Error)
+        client.command('status', (err, data) => {
+          if (client) {
+            expect(err).toBeInstanceOf(Error)
+            expect(data).toBeNull()
+            expect(client.isAlive()).toBe(false)
+            done()
+          }
+        })
+      }
     }, 1000)
   })
 
   test('openOnly', (done) => {
-    const db_path = path.join(db_dir, `openonlry.db`)
+    db_dir = path.join(__dirname, 'temp.openonlry')
+    const db_path = path.join(db_dir, `db`)
+    rimraf(db_dir)
+    mkdir(db_dir)
+
     const opts = createOptions()
     opts.openOnly = true
-    const client = createClient(db_path, opts)
-    try {
-      expect(client.error).toBeUndefined()
-    } catch (err) {
-      shutdown(client, done)
-      throw err
-    }
+    client = createClient(db_path, opts)
+    expect(client.error).toBeUndefined()
 
     setTimeout(() => {
       try {
-        expect(client.error).toBeInstanceOf(Error)
-      } finally {
-        shutdown(client, done)
+        expect(client?.error).toBeInstanceOf(Error)
+        done()
+      } catch (e) {
+        //
       }
     }, 1000)
   })
 
   test('kill client', (done) => {
-    const db_path = path.join(db_dir, `kill_client.db`)
+    db_dir = path.join(__dirname, 'temp.kill_client')
+    const db_path = path.join(db_dir, `db`)
+    rimraf(db_dir)
+    mkdir(db_dir)
+
     const opts = createOptions()
-    const client = createClient(db_path, opts)
+    client = createClient(db_path, opts)
 
     expect(client).not.toBeUndefined()
 
-    if (client) {
-      setTimeout(() => {
+    setTimeout(() => {
+      if (client) {
         expect(client.kill()).toBe(true)
-        shutdown(client, done)
-      }, 1000)
-    } else {
+      }
       done()
-    }
+    }, 1000)
   })
 
   test('invalid command', (done) => {
-    const db_path = path.join(db_dir, `invalid_command.db`)
+    db_dir = path.join(__dirname, 'temp.invalid_command')
+    const db_path = path.join(db_dir, `db`)
+    rimraf(db_dir)
+    mkdir(db_dir)
+
     const opts = createOptions()
-    const client = createClient(db_path, opts)
+    client = createClient(db_path, opts)
 
     expect(client).not.toBeUndefined()
 
-    if (client) {
-      client.command('', (err, data) => {
-        try {
-          expect(err).toBeInstanceOf(Error)
-          expect(data).toBeNull()
-        } finally {
-          shutdown(client, done)
-        }
-      })
-    } else {
+    client.command('', (err, data) => {
+      expect(err).toBeInstanceOf(Error)
+      expect(data).toBeNull()
       done()
-    }
+    })
   })
 
   test('command success', (done) => {
-    const db_path = path.join(db_dir, 'command_success.db')
+    db_dir = path.join(__dirname, 'temp.command_success')
+    const db_path = path.join(db_dir, `db`)
+    rimraf(db_dir)
+    mkdir(db_dir)
+
     const opts = createOptions()
-    const client = createClient(db_path, opts)
+    client = createClient(db_path, opts)
 
     expect(client).not.toBeUndefined()
 
-    if (client) {
-      client.command('status', (err, data) => {
-        try {
-          expect(err).toBeUndefined()
-          expect(typeof data).toBe('object')
-        } finally {
-          shutdown(client, done)
-        }
-      })
-    } else {
+    client.command('status', (err, data) => {
+      expect(err).toBeUndefined()
+      expect(typeof data).toBe('object')
       done()
-    }
+    })
   })
 
   test('command failure', (done) => {
-    const db_path = path.join(db_dir, 'command_fail.db')
+    db_dir = path.join(__dirname, 'temp.command_fail')
+    const db_path = path.join(db_dir, `db`)
+    rimraf(db_dir)
+    mkdir(db_dir)
+
     const opts = createOptions()
-    const client = createClient(db_path, opts)
+    client = createClient(db_path, opts)
 
     expect(client).not.toBeUndefined()
 
-    if (client) {
-      client.command('table_create', (err, data) => {
-        try {
-          expect(err).toBeInstanceOf(GroongaError)
-          expect(data).toBeNull()
-        } finally {
-          shutdown(client, done)
-        }
-      })
-    } else {
+    client.command('table_create', (err, data) => {
+      expect(err).toBeInstanceOf(GroongaError)
+      expect(data).toBeNull()
       done()
-    }
+    })
   })
 
   test('message pack (unsupported)', (done) => {
-    const db_path = path.join(db_dir, 'message_pack.db')
+    db_dir = path.join(__dirname, 'temp.message_pack')
+    const db_path = path.join(db_dir, `db`)
+    rimraf(db_dir)
+    mkdir(db_dir)
+
     const opts = createOptions()
-    const client = createClient(db_path, opts)
+    client = createClient(db_path, opts)
 
     expect(client).not.toBeUndefined()
 
-    if (client) {
-      client.command('status --output_type msgpack', (err, data) => {
-        try {
-          expect(err).toBeUndefined()
-          expect(Buffer.isBuffer(data)).toBe(true)
-        } finally {
-          shutdown(client, done)
-        }
-      })
-    } else {
+    client.command('status --output_type msgpack', (err, data) => {
+      expect(err).toBeUndefined()
+      expect(Buffer.isBuffer(data)).toBe(true)
       done()
-    }
+    })
   })
 
   test('commandAsync', async () => {
-    const db_path = path.join(db_dir, 'commandAsync.db')
+    db_dir = path.join(__dirname, 'temp.commandAsync')
+    const db_path = path.join(db_dir, `db`)
+    rimraf(db_dir)
+    mkdir(db_dir)
+
     const opts = createOptions()
-    const client = createClient(db_path, opts)
+    client = createClient(db_path, opts)
 
     expect(client).not.toBeUndefined()
 
-    if (client) {
-      try {
-        const r1 = await client
-          .commandAsync('table_create People TABLE_HASH_KEY', { key_type: 'ShortText' })
-          .catch(() => undefined)
-        expect(r1).not.toBeUndefined()
-        expect(r1).toBe(true)
+    const r1 = await client
+      .commandAsync('table_create People TABLE_HASH_KEY', { key_type: 'ShortText' })
+      .catch(() => undefined)
+    expect(r1).not.toBeUndefined()
+    expect(r1).toBe(true)
 
-        const r2 = await client.commandAsync('dump').catch(() => undefined)
-        expect(r2).not.toBeUndefined()
-        expect((r2 as string).trim()).toBe('table_create People TABLE_HASH_KEY ShortText')
+    const r2 = await client.commandAsync('dump').catch(() => undefined)
+    expect(r2).not.toBeUndefined()
+    expect((r2 as string).trim()).toBe('table_create People TABLE_HASH_KEY ShortText')
 
-        const r3 = await client
-          .commandAsync('column_create --table People --name age --flags COLUMN_SCALAR --type UInt8')
-          .catch(() => undefined)
-        expect(r3).not.toBeUndefined()
-        expect(r3).toBe(true)
+    const r3 = await client
+      .commandAsync('column_create --table People --name age --flags COLUMN_SCALAR --type UInt8')
+      .catch(() => undefined)
+    expect(r3).not.toBeUndefined()
+    expect(r3).toBe(true)
 
-        const r4 = await client
-          .commandAsync('load --table People', { values: JSON.stringify([{ _key: 'alice', age: 7 }]) })
-          .catch(() => undefined)
-        expect(r4).not.toBeUndefined()
-        expect(r4).toBe(1)
+    const r4 = await client
+      .commandAsync('load --table People', { values: JSON.stringify([{ _key: 'alice', age: 7 }]) })
+      .catch(() => undefined)
+    expect(r4).not.toBeUndefined()
+    expect(r4).toBe(1)
 
-        const r5 = await client.commandAsync('table_create').catch((err) => err)
-        expect(r5).toBeInstanceOf(GroongaError)
-      } finally {
-        await shutdown(client)
-      }
-    }
+    const r5 = await client.commandAsync('table_create').catch((err) => err)
+    expect(r5).toBeInstanceOf(GroongaError)
   })
 })

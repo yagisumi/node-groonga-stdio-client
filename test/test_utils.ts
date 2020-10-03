@@ -45,7 +45,7 @@ export function shutdown(client: GroongaStdioClient, done?: jest.DoneCallback): 
     return new Promise((resolve) => {
       client.command('quit', () => {
         client.kill()
-        resolve()
+        setTimeout(resolve, 300)
       })
     })
   }

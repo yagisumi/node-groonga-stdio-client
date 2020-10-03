@@ -8,3 +8,4 @@ node_modules/
 /src/*.map
 /src/test/*.map
 /src/test/*.d.ts
+/test/temp*
