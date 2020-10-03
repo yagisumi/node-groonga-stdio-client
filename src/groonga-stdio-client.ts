@@ -29,9 +29,6 @@ export class GroongaStdioClient {
   private groongaPath = 'groonga'
   private openOnly = false
   private groonga?: child_process.ChildProcessWithoutNullStreams
-  get process() {
-    return this.groonga
-  }
   private executing = false
   private commandQueue: CommandData[] = []
   private currentCommandData?: CommandData
