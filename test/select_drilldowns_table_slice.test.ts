@@ -20,7 +20,7 @@ describe('GroongaStdioClient', () => {
     }
   })
 
-  test('load/command_version/3/default', async () => {
+  test('select/drilldowns/table/slice', async () => {
     db_dir = path.join(__dirname, 'temp.select_drilldowns_table_slice')
     const db_path = path.join(db_dir, `db`)
     rimraf(db_dir)
