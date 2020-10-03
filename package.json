@@ -11,7 +11,7 @@
   "scripts": {
     "test": "run-s prettier:fix eslint mocha:coverage",
     "jest": "jest",
-    "mocha": "cross-env TS_NODE_FILES=true TS_NODE_PROJECT=tsconfig.mocha.json mocha --config mocharc.json \"test/**/*.{test,spec}.ts\"",
+    "mocha": "cross-env TS_NODE_FILES=true TS_NODE_PROJECT=tsconfig.mocha.json mocha --config mocharc.json \"test/**/*.test.ts\"",
     "mocha:coverage": "nyc npm run mocha -- --no-parallel",
     "build": "run-s clean build:*",
     "clean": "rimraf lib coverage umd *.tgz .rpt2_cache .nyc_output",
