@@ -11,15 +11,15 @@
   "scripts": {
     "test": "run-s prettier:check eslint mocha:coverage",
     "jest": "jest",
-    "mocha": "cross-env TS_NODE_FILES=true TS_NODE_PROJECT=tsconfig.mocha.json mocha --config mocharc.json \"test/**/*.test.ts\"",
+    "mocha": "cross-env TS_NODE_FILES=true TS_NODE_PROJECT=tsconfig.mocha.json mocha \"test/**/*.test.ts\"",
     "mocha:coverage": "nyc npm run mocha -- --no-parallel",
     "build": "run-s clean build:*",
     "clean": "rimraf lib coverage umd *.tgz .rpt2_cache .nyc_output",
     "build:cjs": "rollup -c -f cjs -o ./lib/groonga-stdio-client.js",
     "build:mjs": "rollup -c -f es -o ./lib/groonga-stdio-client.mjs",
     "build:d_ts": "tsc -p src -d --emitDeclarationOnly --outDir ./lib",
-    "prettier:check": "prettier --check \"{src,test}/**/*.{ts,js,json}\"",
-    "prettier:fix": "prettier --write \"{src,test}/**/*.{ts,js,json}\"",
+    "prettier:check": "prettier --check \"**/*.{ts,js,json}\"",
+    "prettier:fix": "prettier --write \"**/*.{ts,js,json}\"",
     "eslint": "eslint \"{src,test}/**/*.{js,ts}\"",
     "prepack": "run-s build test"
   },
