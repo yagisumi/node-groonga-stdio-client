@@ -31,7 +31,7 @@ main()
 ### `createGroongaClient`
 alias: `createClient`
 ```ts
-function createClient(
+function createGroongaClient(
   db_path: string, 
   options?: { groongaPath?: string; readInterval?: number }
 ): GroongaStdioClient
