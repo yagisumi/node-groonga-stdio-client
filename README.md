@@ -1,26 +1,18 @@
 # @yagisumi/groonga-stdio-client
 
-For testing purposes.
+**For testing purposes.**<br/>
 Groonga Standard I/O interface client.
 
 [![NPM version][npm-image]][npm-url] [![install size][packagephobia-image]][packagephobia-url] [![DefinitelyTyped][dts-image]][dts-url]  
 [![Build Status][githubactions-image]][githubactions-url] [![Coverage percentage][coveralls-image]][coveralls-url]
 
-## Installation
-
-```sh
-$ npm i @yagisumi/groonga-stdio-client
-```
-
 ## Usage
 
-- typescript
-
 ```ts
-import { createClient } from '@yagisumi/groonga-stdio-client'
+import { createGroongaClient } from '@yagisumi/groonga-stdio-client'
 
 async function main() {
-  const client = createClient(dbPath, { groongaPath: 'groonga' })
+  const client = createGroongaClient(dbPath, { groongaPath: 'groonga' })
   const r1 = await client.commandAsync('status').catch(() => undefined)
 
   client.command('table_list', (err, data) => {
@@ -36,7 +28,8 @@ main()
 
 ## API
 
-### GroongaStdioClient
+### `createGroongaClient`
+alias: `createClient`
 ```ts
 function createClient(
   db_path: string, 
@@ -45,8 +38,8 @@ function createClient(
 ```
 Creats a client. Same as `new GroongaStdioClient(db_path, options)`
 
-### GroongaStdioClient
-#### command
+### `GroongaStdioClient`
+#### `command`
 ```ts
 command(
   command: string,
@@ -60,7 +53,7 @@ command(
 ```
 Executes a command with a callback.
 
-#### commandAsync
+#### `commandAsync`
 ```ts
 commandAsync(
   command: string,
@@ -82,10 +75,6 @@ Executes a command and returns a promise.
 [npm-url]: https://npmjs.org/package/@yagisumi/groonga-stdio-client
 [packagephobia-image]: https://flat.badgen.net/packagephobia/install/@yagisumi/groonga-stdio-client
 [packagephobia-url]: https://packagephobia.now.sh/result?p=@yagisumi/groonga-stdio-client
-[travis-image]: https://img.shields.io/travis/yagisumi/node-groonga-stdio-client.svg?style=flat-square
-[travis-url]: https://travis-ci.org/yagisumi/node-groonga-stdio-client
-[appveyor-image]: https://img.shields.io/appveyor/ci/yagisumi/node-groonga-stdio-client.svg?logo=appveyor&style=flat-square
-[appveyor-url]: https://ci.appveyor.com/project/yagisumi/node-groonga-stdio-client
 [coveralls-image]: https://img.shields.io/coveralls/yagisumi/node-groonga-stdio-client.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/github/yagisumi/node-groonga-stdio-client?branch=master
 [dts-image]: https://img.shields.io/badge/DefinitelyTyped-.d.ts-blue.svg?style=flat-square
