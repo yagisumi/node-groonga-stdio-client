@@ -16,7 +16,9 @@ describe('client utils', () => {
       const cmd = parseCommand('load --table Memos --command_version 3', { values })
       expect(cmd).not.toBeUndefined()
       if (cmd) {
-        expect(formatCommand(cmd)).toBe(cmd.to_command_format({ exclude: ['values'] }) + '\n' + values + '\n')
+        expect(formatCommand(cmd)).toBe(
+          cmd.to_command_format({ exclude: ['values'] }) + '\n' + values + '\n'
+        )
       }
     })
 
@@ -34,10 +36,14 @@ describe('client utils', () => {
 
     test('load command (values with spaces)', () => {
       const values = JSON.stringify([{ value: 1 }, { value: 2 }])
-      const cmd = parseCommand('load --table Memos --command_version 3', { values: values + '\n\n' })
+      const cmd = parseCommand('load --table Memos --command_version 3', {
+        values: values + '\n\n',
+      })
       expect(cmd).not.toBeUndefined()
       if (cmd) {
-        expect(formatCommand(cmd)).toBe(cmd.to_command_format({ exclude: ['values'] }) + '\n' + values + '\n')
+        expect(formatCommand(cmd)).toBe(
+          cmd.to_command_format({ exclude: ['values'] }) + '\n' + values + '\n'
+        )
       }
     })
 
@@ -45,7 +51,9 @@ describe('client utils', () => {
       const cmd = parseCommand('load --table Memos --command_version 3')
       expect(cmd).not.toBeUndefined()
       if (cmd) {
-        expect(formatCommand(cmd)).toBe(cmd.to_command_format({ exclude: ['values'] }) + '\n' + '[]' + '\n')
+        expect(formatCommand(cmd)).toBe(
+          cmd.to_command_format({ exclude: ['values'] }) + '\n' + '[]' + '\n'
+        )
       }
     })
   })
@@ -129,7 +137,7 @@ describe('client utils', () => {
         error: {
           message: "[column][create] table doesn't exist: <Memos>",
           function: 'command_column_create',
-          file: 'G:\\data\\workspace\\script\\groonga\\src\\groonga-10.0.2\\lib\\proc\\proc_column.c',
+          file: 'D:\\data\\groonga\\src\\groonga-10.0.2\\lib\\proc\\proc_column.c',
           line: 198,
         },
       },

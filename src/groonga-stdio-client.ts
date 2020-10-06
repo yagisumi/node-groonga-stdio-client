@@ -114,7 +114,11 @@ export class GroongaStdioClient {
 
   command(command: string, options: Record<string, unknown>, callback: CommandCallback): void
   command(command: string, callback: CommandCallback): void
-  command(command: string, opts_or_cb: Record<string, unknown> | CommandCallback, callback?: CommandCallback): void {
+  command(
+    command: string,
+    opts_or_cb: Record<string, unknown> | CommandCallback,
+    callback?: CommandCallback
+  ): void {
     let opts: Record<string, unknown>
     let cb: CommandCallback
     if (typeof opts_or_cb === 'object') {
