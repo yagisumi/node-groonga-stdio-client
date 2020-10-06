@@ -45,10 +45,10 @@ export class GroongaStdioClient {
   constructor(db_path: string, options?: Options) {
     this.dbPath = db_path
     if (options) {
-      if (options.groongaPath) {
+      if (options.groongaPath != null) {
         this.groongaPath = options.groongaPath
       }
-      if (options.readInterval) {
+      if (options.readInterval != null) {
         this.readInterval = Math.max(options.readInterval, 300)
       }
       if (options.openOnly != null) {
@@ -76,7 +76,7 @@ export class GroongaStdioClient {
         try {
           this.groonga.stderr.setEncoding('utf8')
           const message = this.groonga.stderr.read()
-          if (message && typeof message === 'string' && message.length > 0) {
+          if (typeof message === 'string' && message.length > 0) {
             this._error = new Error(`[exit code: ${code}] ${message}`)
           } else {
             this._error = new Error(`[exit code: ${code}]`)
@@ -201,7 +201,7 @@ export class GroongaStdioClient {
       } else if (typeof data === 'string') {
         this.data = (this.data ?? '') + data
       } else if (data == null) {
-        if (this.buf || this.data) {
+        if (this.buf || this.data != null) {
           this.done()
         }
       }
@@ -224,7 +224,7 @@ export class GroongaStdioClient {
     if (this.currentCommandData) {
       if (this.currentOutputType === 'msgpack' && this.buf) {
         this.currentCommandData.callback(undefined, this.buf)
-      } else if (this.data) {
+      } else if (this.data != null) {
         if (TypeGuards.isDump(this.currentCommandData.command)) {
           this.currentCommandData.callback(undefined, this.data)
         } else {

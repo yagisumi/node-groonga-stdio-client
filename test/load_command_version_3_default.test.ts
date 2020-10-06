@@ -15,7 +15,7 @@ describe('GroongaStdioClient', () => {
     if (client) {
       await shutdown(client).catch(() => null)
     }
-    if (db_dir) {
+    if (db_dir != null) {
       rimraf(db_dir)
     }
   })

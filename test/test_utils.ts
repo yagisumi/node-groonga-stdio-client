@@ -2,8 +2,8 @@ import fs from 'fs'
 import path from 'path'
 import { Options, GroongaStdioClient } from '@/groonga-stdio-client'
 
-export function mkdir(path: string) {
-  fs.mkdirSync(path)
+export function mkdir(dir: string) {
+  fs.mkdirSync(dir)
 }
 
 export function rimraf(dir_path: string) {
