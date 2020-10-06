@@ -42,6 +42,10 @@ jobs:
       matrix:
         node: [10, 12, 14]
     steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
       - uses: actions/checkout@v2
       - name: Set Node.js
         uses: actions/setup-node@v1
@@ -50,12 +54,12 @@ jobs:
       - name: Install Groonga
         shell: cmd
         run: |
-          set RELEASE_VERSION=10.0.2
+          set RELEASE_VERSION=10.0.7
           set VS_VERSION=2019
           set ARCHIVE=groonga-%RELEASE_VERSION%-x64-vs%VS_VERSION%.zip
 
-          curl -OL https://github.com/groonga/groonga/releases/download/v%RELEASE_VERSION%/%ARCHIVE%
-          7z x %ARCHIVE%
+          curl -OL http://packages.groonga.org/windows/groonga/%ARCHIVE%
+          7z x %ARCHIVE% -o*
           del %ARCHIVE%
           move groonga-* ..\groonga
       - name: node environment
