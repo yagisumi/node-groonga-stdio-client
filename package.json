@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "description": "Groonga Standard I/O interface client.",
   "keywords": [],
-  "private": true,
   "main": "lib/groonga-stdio-client",
   "module": "lib/groonga-stdio-client.mjs",
   "types": "lib/groonga-stdio-client.d.ts",
