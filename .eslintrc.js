@@ -1,4 +1,5 @@
 module.exports = {
+  ignorePatterns: [],
   extends: [
     'eslint:recommended', //
     'prettier',
